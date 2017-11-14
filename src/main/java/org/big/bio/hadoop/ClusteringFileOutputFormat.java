@@ -52,7 +52,7 @@ public class ClusteringFileOutputFormat extends TextOutputFormat<String, String>
      * @throws IOException IO Exception
      */
     @Override
-    public void checkOutputSpecs(JobContext job) throws FileAlreadyExistsException, IOException {
+    public void checkOutputSpecs(JobContext job) throws IOException {
         if(job.getConfiguration().get("spark.hadoop.validateOutputSpecs") == null || Boolean.parseBoolean(job.getConfiguration().get("spark.hadoop.validateOutputSpecs")))
             super.checkOutputSpecs(job);
     }
