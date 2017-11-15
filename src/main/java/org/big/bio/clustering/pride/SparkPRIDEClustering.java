@@ -136,6 +136,7 @@ public class SparkPRIDEClustering extends MSClustering {
 
                 spectra = binnedPrecursors.flatMapToPair(new IterableClustersToBinner(clusteringMethod.context(), PRIDEClusterDefaultParameters.BINNER_WINDOW_PROPERTY));
                 binnedPrecursors = spectra.groupByKey();
+                SparkUtil.collectLogCount("Number of Unique Binned Precursors = ", binnedPrecursors);
 
                 comparisonPredicate = new IsKnownComparisonsPredicate();
 

@@ -71,9 +71,6 @@ public class PRIDEClusterDefaultParameters implements IConfigurationParameters {
             NARRROW_BIN_WIDTH, MZIntensityUtilities.LOWEST_USABLE_MZ,
             NARRROW_BIN_OVERLAP);
 
-    //Todo: We need to define How this is used and if is not removed it.
-    public static final String DEFAULT_BINNING_RESOURCE = "/pride-binning.tsv";
-
     // This is the default checker for the similarity CombinedFisherIntesityTest
     public static final String DEFAULT_SIMILARITY_CHECKER_CLASS = "uk.ac.ebi.pride.spectracluster.similarity.CombinedFisherIntensityTest";
 
@@ -98,11 +95,9 @@ public class PRIDEClusterDefaultParameters implements IConfigurationParameters {
     // Filter mz200 spectra
     public static final boolean DEFAULT_FILTER_SPECTRA_MZ200 = true;
 
-    public static final float DEFAULT_INIT_BINNER_WINDOW = 0.5F;
+    public static final float DEFAULT_INIT_BINNER_WINDOW = 0.05F;
 
-    public static final float DEFAULT_BINNER_WIDTH = 4.0F;
-
-
+    public static final float DEFAULT_BINNER_WIDTH = 4F;
 
     /** Label of each Default property of PRIDE cluster algorithm  **/
 
@@ -258,7 +253,10 @@ public class PRIDEClusterDefaultParameters implements IConfigurationParameters {
      */
 
     // Remove the Impossible High Peaks and the Precursor Peak
-    public static final IFunction<ISpectrum,ISpectrum> INITIAL_SPECTRUM_FILTER = Functions.join(new RemoveImpossiblyHighPeaksFunction(), new RemovePrecursorPeaksFunction(Defaults.getFragmentIonTolerance()));
+    public static final IFunction<ISpectrum,ISpectrum> INITIAL_SPECTRUM_FILTER = Functions
+            .join(new RemoveImpossiblyHighPeaksFunction(),
+                    new RemovePrecursorPeaksFunction(Defaults.getFragmentIonTolerance()),
+                            new RemoveIonContaminantsPeaksFunction(Defaults.getFragmentIonTolerance()));
 
 
     // This filter is applied to all spectra when loaded from the file - after the initial spectrum filter.

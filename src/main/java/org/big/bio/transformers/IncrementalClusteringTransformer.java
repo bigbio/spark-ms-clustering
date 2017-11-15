@@ -1,5 +1,6 @@
 package org.big.bio.transformers;
 
+import com.google.common.collect.Lists;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.big.bio.keys.BinMZKey;
 import scala.Tuple2;
@@ -13,6 +14,7 @@ import uk.ac.ebi.pride.spectracluster.util.function.IFunction;
 import uk.ac.ebi.pride.spectracluster.util.predicate.IComparisonPredicate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -51,10 +53,14 @@ public class IncrementalClusteringTransformer implements PairFlatMapFunction<Tup
     public Iterator<Tuple2<BinMZKey, Iterable<ICluster>>> call(Tuple2<BinMZKey, Iterable<ICluster>> binMZKeyIterableTuple2) throws Exception {
 
         List<Tuple2<BinMZKey, Iterable<ICluster>>> ret = new ArrayList<>();
+
+        List<ICluster> clusterList = Lists.newArrayList(binMZKeyIterableTuple2._2());
+        Collections.sort(clusterList, (o1, o2) -> Float.compare(o1.getPrecursorMz(), o2.getPrecursorMz()));
+
         IIncrementalClusteringEngine engine = createIncrementalClusteringEngine();
 
         // Add spectra to the cluster engine.
-        binMZKeyIterableTuple2._2().forEach(engine::addClusterIncremental);
+        clusterList.forEach(engine::addClusterIncremental);
 
         // Return the results.
         ret.add(new Tuple2<>(binMZKeyIterableTuple2._1(), engine.getClusters()));

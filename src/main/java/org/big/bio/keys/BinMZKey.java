@@ -4,7 +4,7 @@ package org.big.bio.keys;
 /**
  * Key for the MZ Precursor mass, When a map is converted into a key-value pair where the key is the
  * mz value (first randomization of the data by mz values ) can be done with this key. The BinMZ is needed because
- * when two mass values are compare they are done using a Bin Size ather than the exacted mass. Bin is defined at he very beginning
+ * when two mass values are compare they are done using a Bin Size rather than the exacted mass. Bin is defined at he very beginning
  * of the algorithm.
  *
  * @author Yasset Perez-Riverol
@@ -56,10 +56,16 @@ public class BinMZKey implements IKeyable<BinMZKey> {
     }
 
 
-    @Override
+   @Override
     public boolean equals(final Object o) {
-        return o != null && getClass() == o.getClass() && toString().equals(o.toString());
+        return o != null && getClass() == o.getClass() && bin == ((BinMZKey)o).bin;
     }
+
+//    @Override
+//    public boolean equals(final Object o) {
+//        return o != null && getClass() == o.getClass() && toString().equals(o.toString());
+//    }
+
 
     @Override
     public int hashCode() {
@@ -79,6 +85,15 @@ public class BinMZKey implements IKeyable<BinMZKey> {
             return toString().compareTo(binMZKey.toString());
         return 1;
     }
+
+//    @Override
+//    public int compareTo(final BinMZKey binMZKey){
+//        if((precursorMZ + bin) > (binMZKey.precursorMZ - bin))
+//            return -1;
+//        else if((binMZKey.precursorMZ + bin) < (precursorMZ - bin))
+//            return 1;
+//        return 0;
+//    }
 
     /**
      * here is an int that a partitioner would use
