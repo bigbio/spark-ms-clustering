@@ -9,7 +9,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.big.bio.clustering.IMSClustering;
 import org.big.bio.clustering.MSClustering;
 import org.big.bio.hadoop.ClusteringFileOutputFormat;
-import org.big.bio.hadoop.MGFileFInputFormat;
+import org.big.bio.hadoop.MGFInputFormat;
 import org.big.bio.keys.BinMZKey;
 import org.big.bio.qcontrol.QualityControlUtilities;
 import org.big.bio.transformers.*;
@@ -96,11 +96,11 @@ public class SparkPRIDEClustering extends MSClustering {
             //Output Path
             String hdfsOutputFile = cmd.getOptionValue("o");
 
-            Class inputFormatClass = MGFileFInputFormat.class;
+            Class inputFormatClass = MGFInputFormat.class;
             Class keyClass = String.class;
             Class valueClass = String.class;
 
-            JavaPairRDD<Text, Text> spectraAsStrings = clusteringMethod.context().newAPIHadoopFile(inputPath, inputFormatClass, keyClass, valueClass, clusteringMethod.context().hadoopConfiguration());
+            JavaPairRDD<String, String> spectraAsStrings = clusteringMethod.context().newAPIHadoopFile(inputPath, inputFormatClass, keyClass, valueClass, clusteringMethod.context().hadoopConfiguration());
             SparkUtil.collectLogCount("Number of Spectra To Cluster = ", spectraAsStrings);
 
             // Process the Spectra Files and convert them into BinMZKey Hash map. Each entry correspond to a "unique" precursor mass.

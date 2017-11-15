@@ -31,12 +31,12 @@ import java.util.List;
  * <p>
  * Created by Yasset Perez-Riverol (ypriverol@gmail.com) on 31/10/2017.
  */
-public class MGFStringToClusterTransformer implements PairFlatMapFunction<Tuple2<Text, Text>, String, ICluster> {
+public class MGFStringToClusterTransformer implements PairFlatMapFunction<Tuple2<String, String>, String, ICluster> {
 
     @Override
-    public Iterator<Tuple2<String, ICluster>> call(final Tuple2<Text, Text> kv) throws Exception {
+    public Iterator<Tuple2<String, ICluster>> call(final Tuple2<String, String> kv) throws Exception {
         List<Tuple2<String, ICluster>> ret = new ArrayList<>();
-        LineNumberReader inp = new LineNumberReader(new StringReader(kv._2.toString()));
+        LineNumberReader inp = new LineNumberReader(new StringReader(kv._2));
         ISpectrum spectrum = ParserUtilities.readMGFScan(inp);
         ICluster cluster = ClusterUtilities.asCluster(spectrum);
         ret.add(new Tuple2<>(cluster.getId(), cluster));

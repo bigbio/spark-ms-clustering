@@ -95,7 +95,7 @@ public class PRIDEClusterDefaultParameters implements IConfigurationParameters {
     // Filter mz200 spectra
     public static final boolean DEFAULT_FILTER_SPECTRA_MZ200 = true;
 
-    public static final float DEFAULT_INIT_BINNER_WINDOW = 0.05F;
+    public static final float DEFAULT_INIT_BINNER_WINDOW = 0.5F;
 
     public static final float DEFAULT_BINNER_WIDTH = 4F;
 

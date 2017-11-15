@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author Yasset Perez-Riverol
  */
-public class MGFStringToSpectrumTransformer implements PairFlatMapFunction<Tuple2<Text, Text>, String, ISpectrum> {
+public class MGFStringToSpectrumTransformer implements PairFlatMapFunction<Tuple2<String, String>, String, ISpectrum> {
 
     /**
      * Default constructor for the Spectrum Reader.
@@ -32,7 +32,7 @@ public class MGFStringToSpectrumTransformer implements PairFlatMapFunction<Tuple
      * @throws Exception
      */
     @Override
-    public Iterator<Tuple2<String, ISpectrum>> call(final Tuple2<Text, Text> kv) throws Exception {
+    public Iterator<Tuple2<String, ISpectrum>> call(final Tuple2<String, String> kv) throws Exception {
         List<Tuple2<String, ISpectrum>> ret = new ArrayList<>();
         LineNumberReader inp = new LineNumberReader(new StringReader(kv._2.toString()));
         ISpectrum spectrum = ParserUtilities.readMGFScan(inp);

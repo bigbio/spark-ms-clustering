@@ -45,14 +45,14 @@ public class MGFInputToClusterRunner {
     @Test
     public void readingClusterFile() throws IOException, InterruptedException {
 
-        Class inputFormatClass = MGFileFInputFormat.class;
+        Class inputFormatClass = MGFInputFormat.class;
         Class keyClass = String.class;
         Class valueClass = String.class;
 
         Configuration hadoopConf = sparkConf.hadoopConfiguration();
 
 
-        JavaPairRDD<Text, Text> spectraAsStrings = sparkConf.newAPIHadoopFile(hdfsFileName, inputFormatClass, keyClass, valueClass, hadoopConf);
+        JavaPairRDD<String, String> spectraAsStrings = sparkConf.newAPIHadoopFile(hdfsFileName, inputFormatClass, keyClass, valueClass, hadoopConf);
 
         JavaPairRDD<String, ICluster> spectra = spectraAsStrings.flatMapToPair(new MGFStringToClusterTransformer());
 

@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.big.bio.clustering.pride.PRIDEClusterDefaultParameters;
-import org.big.bio.hadoop.MGFileFInputFormat;
+import org.big.bio.hadoop.MGFInputFormat;
 import org.big.bio.keys.BinMZKey;
 import org.big.bio.keys.MZKey;
 import org.big.bio.utils.SparkUtil;
@@ -49,11 +49,11 @@ public class PrecursorBinnerTransformerTest {
 
         Configuration hadoopConf = sparkConf.hadoopConfiguration();
 
-        Class inputFormatClass = MGFileFInputFormat.class;
+        Class inputFormatClass = MGFInputFormat.class;
         Class keyClass = String.class;
         Class valueClass = String.class;
 
-        JavaPairRDD<Text, Text> spectraAsStrings = sparkConf.newAPIHadoopFile(hdfsFileName, inputFormatClass, keyClass, valueClass, hadoopConf);
+        JavaPairRDD<String, String> spectraAsStrings = sparkConf.newAPIHadoopFile(hdfsFileName, inputFormatClass, keyClass, valueClass, hadoopConf);
 
         JavaPairRDD<String, ISpectrum> spectra = spectraAsStrings.flatMapToPair(new MGFStringToSpectrumTransformer());
         LOGGER.info("Number of Spectra = " + spectra.count());

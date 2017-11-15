@@ -2,8 +2,8 @@ package org.big.bio.utils;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.big.bio.hadoop.MGFileFInputFormat;
 
+import org.big.bio.hadoop.MGFInputFormat;
 import uk.ac.ebi.pride.spectracluster.cluster.ICluster;
 import uk.ac.ebi.pride.spectracluster.io.CGFClusterAppender;
 import uk.ac.ebi.pride.spectracluster.io.DotClusterClusterAppender;
@@ -101,7 +101,7 @@ public final class IOUtilities {
      */
     public static JavaPairRDD parseMGFRDD(JavaSparkContext context, String inputPath) {
 
-        Class inputFormatClass = MGFileFInputFormat.class;
+        Class inputFormatClass = MGFInputFormat.class;
         Class keyClass         = String.class;
         Class valueClass       = String.class;
 
