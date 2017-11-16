@@ -1,10 +1,12 @@
 package org.big.bio.transformers;
 
+import org.apache.log4j.Logger;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.big.bio.clustering.pride.PRIDEClusterDefaultParameters;
 import org.big.bio.keys.BinMZKey;
 import org.big.bio.keys.MZKey;
+import org.big.bio.utils.SparkUtil;
 import scala.Tuple2;
 import uk.ac.ebi.pride.spectracluster.cluster.ICluster;
 import uk.ac.ebi.pride.spectracluster.util.MZIntensityUtilities;
@@ -33,6 +35,9 @@ public class PrecursorBinnerTransformer implements PairFlatMapFunction<Tuple2<MZ
 
     private IWideBinner binner;
 
+    private static final Logger LOGGER = Logger.getLogger(PrecursorBinnerTransformer.class);
+
+
     /**
      * This class Binner specific precursor mass for all clusters. Still not aggregation has been performed at this point.
      *
@@ -58,6 +63,7 @@ public class PrecursorBinnerTransformer implements PairFlatMapFunction<Tuple2<MZ
         ICluster cluster = tupleCluster._2();
         float precursorMz = cluster.getPrecursorMz();
         int[] bins = binner.asBins(precursorMz);
+
 
         // must only be in one bin
         if (bins.length > 1) {

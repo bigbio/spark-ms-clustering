@@ -92,6 +92,10 @@ public class SparkPRIDEClusteringTest {
         //Number of Clusters after the first iteration
         PRIDEClusterUtils.reportNumberOfClusters("Number of Clusters after ClusterShareMajorPeakPredicate = ", binnedPrecursors);
 
+        binnedPrecursors = binnedPrecursors.reduceByKey(new ReduceByBinMzKey(similarityChecker, originalPrecision, null, comparisonPredicate));
+        //Number of Clusters after the first iteration
+        PRIDEClusterUtils.reportNumberOfClusters("Number of Clusters after ClusterShareMajorPeakPredicate = ", binnedPrecursors);
+
 
         //Thresholds for the refinements of the results
         List<Float> thresholds = PRIDEClusterUtils.generateClusteringThresholds(Float.parseFloat(clusteringMethod.getProperty(PRIDEClusterDefaultParameters.CLUSTER_START_THRESHOLD_PROPERTY)),
