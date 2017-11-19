@@ -15,7 +15,7 @@ public class BinMZKey implements IKeyable<BinMZKey> {
     private final int bin;
     private final double precursorMZ;
     private final String binKey;
-    private final String precursorMZKey;
+    private final double precursorMZKey;
 
     public BinMZKey(final int pBin, final double pPrecursorMZ) {
         bin = pBin;
@@ -24,13 +24,6 @@ public class BinMZKey implements IKeyable<BinMZKey> {
         precursorMZKey = KeyUtilities.mzToKey(getPrecursorMZ());
     }
 
-    public BinMZKey(String str) {
-        String[] split = str.split(":");
-        bin = Integer.parseInt(split[0]);
-        precursorMZ = KeyUtilities.keyToMZ(split[1]);
-        binKey = String.format("%06d", getBin());
-        precursorMZKey = KeyUtilities.mzToKey(getPrecursorMZ());
-    }
 
     /**
      * MZ_RESOLUTION * peakMZ

@@ -10,3 +10,5 @@ import java.io.Serializable;
 public interface IKeyable<T extends IKeyable> extends Comparable<T>, Serializable, IPartitionable{
 
 }
+
+

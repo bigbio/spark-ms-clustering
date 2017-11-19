@@ -10,17 +10,17 @@ import uk.ac.ebi.pride.spectracluster.util.MZIntensityUtilities;
 public class MZKey implements IKeyable<MZKey> {
 
     private final double precursorMZ;
-    private final String precursorMZKey;
+    private final double precursorMZKey;
 
     public MZKey(final double pPrecursorMZ) {
         precursorMZ = pPrecursorMZ;
         precursorMZKey = KeyUtilities.mzToKey(getPrecursorMZ());
     }
 
-    public MZKey(String str) {
-        precursorMZ = KeyUtilities.keyToMZ(str);
-        precursorMZKey = KeyUtilities.mzToKey(getPrecursorMZ());
-    }
+//    public MZKey(String str) {
+//        precursorMZ = KeyUtilities.keyToMZ(str);
+//        precursorMZKey = KeyUtilities.mzToKey(getPrecursorMZ());
+//    }
 
     public double getPrecursorMZ() {
         return precursorMZ;
@@ -32,7 +32,7 @@ public class MZKey implements IKeyable<MZKey> {
 
     @Override
     public String toString() {
-        return precursorMZKey;
+        return KeyUtilities.mzToStringKey(getPrecursorMZ());
     }
 
     @Override

@@ -17,7 +17,7 @@ public class KeyUtilities {
      * @param mz input
      * @return MZ_RESOLUTION * mz as int
      */
-    public static String mzToKey(double mz) {
+    public static String mzToStringKey(double mz) {
         int peak = MZIntensityUtilities.mzToInt(mz);
         return String.format("%010d", peak);
     }
@@ -31,5 +31,15 @@ public class KeyUtilities {
     public static double keyToMZ(String key) {
         double ret = Integer.parseInt(key); // (double)MZ_RESOLUTION;
         return ret / MZIntensityUtilities.MZ_RESOLUTION;
+    }
+
+    /**
+     * convert an int into an mz for east comparison
+     *
+     * @return MZ_RESOLUTION * mz as int
+     */
+    public static double mzToKey(double precursor) {
+        int peak = MZIntensityUtilities.mzToInt(precursor);
+        return keyToMZ(String.format("%010d", peak));
     }
 }
