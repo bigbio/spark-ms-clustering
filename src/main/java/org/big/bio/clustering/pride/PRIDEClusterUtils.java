@@ -42,18 +42,18 @@ public class PRIDEClusterUtils {
         for (int i = 0; i < clusteringRounds; i++) {
             thresholds.add(startThreshold - (stepSize * i));
         }
-
         return thresholds;
     }
 
     /**
-     * This function compute the QC Metrics for a JavaPairRDD. The metrics define how many clusters
+     * This function compute the number of clusters in a JavaPairRDD. The metrics define how many clusters
      * high quality are present in the current results .
      *
      * @param message Message to print
      * @param clusters Clusters.
      */
     public static void reportNumberOfClusters(String message, JavaPairRDD<BinMZKey, Iterable<ICluster>> clusters){
+        LOGGER.info(message + clusters.count());
         JavaRDD<ICluster>  totalCluster = clusters
                 .flatMapValues(cluster -> cluster)
                 .map(Tuple2::_2);

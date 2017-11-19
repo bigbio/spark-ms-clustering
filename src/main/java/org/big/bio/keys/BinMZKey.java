@@ -58,7 +58,7 @@ public class BinMZKey implements IKeyable<BinMZKey> {
 
    @Override
     public boolean equals(final Object o) {
-        return o != null && getClass() == o.getClass() && bin == ((BinMZKey)o).bin;
+        return o != null && getClass() == o.getClass() && toString().equals(o.toString());
     }
 
 //    @Override
@@ -69,7 +69,7 @@ public class BinMZKey implements IKeyable<BinMZKey> {
 
     @Override
     public int hashCode() {
-        return toString().hashCode();
+        return Math.abs(binKey.hashCode());
     }
 
 

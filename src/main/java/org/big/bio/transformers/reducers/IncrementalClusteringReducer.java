@@ -1,9 +1,6 @@
-package org.big.bio.transformers;
+package org.big.bio.transformers.reducers;
 
-import com.google.common.collect.Lists;
-import org.apache.spark.api.java.function.PairFlatMapFunction;
-import org.big.bio.keys.BinMZKey;
-import scala.Tuple2;
+
 import uk.ac.ebi.pride.spectracluster.cluster.ICluster;
 import uk.ac.ebi.pride.spectracluster.engine.GreedyIncrementalClusteringEngine;
 import uk.ac.ebi.pride.spectracluster.engine.IIncrementalClusteringEngine;
@@ -13,9 +10,8 @@ import uk.ac.ebi.pride.spectracluster.util.Defaults;
 import uk.ac.ebi.pride.spectracluster.util.function.IFunction;
 import uk.ac.ebi.pride.spectracluster.util.predicate.IComparisonPredicate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -31,7 +27,7 @@ import java.util.List;
  * <p>
  * Created by ypriverol (ypriverol@gmail.com) on 07/11/2017.
  */
-public class IncrementalClusteringTransformer implements PairFlatMapFunction<Tuple2<BinMZKey, Iterable<ICluster>>, BinMZKey, Iterable<ICluster>> {
+public class IncrementalClusteringReducer implements Serializable{
 
     ISimilarityChecker similarityChecker;
 
@@ -41,7 +37,7 @@ public class IncrementalClusteringTransformer implements PairFlatMapFunction<Tup
 
     IComparisonPredicate<ICluster> comparisonPredicate;
 
-    public IncrementalClusteringTransformer(ISimilarityChecker similarityChecker, double clusteringPrecision, IFunction<List<IPeak>,
+    public IncrementalClusteringReducer(ISimilarityChecker similarityChecker, double clusteringPrecision, IFunction<List<IPeak>,
             List<IPeak>> peakFilterFunction, IComparisonPredicate<ICluster> comparisonPredicate){
         this.similarityChecker = similarityChecker;
         this.clusteringPrecision = clusteringPrecision;
@@ -49,30 +45,10 @@ public class IncrementalClusteringTransformer implements PairFlatMapFunction<Tup
         this.comparisonPredicate = comparisonPredicate;
     }
 
-    @Override
-    public Iterator<Tuple2<BinMZKey, Iterable<ICluster>>> call(Tuple2<BinMZKey, Iterable<ICluster>> binMZKeyIterableTuple2) throws Exception {
-
-        List<Tuple2<BinMZKey, Iterable<ICluster>>> ret = new ArrayList<>();
-
-        List<ICluster> clusterList = Lists.newArrayList(binMZKeyIterableTuple2._2());
-        Collections.sort(clusterList, (o1, o2) -> Float.compare(o1.getPrecursorMz(), o2.getPrecursorMz()));
-
-        IIncrementalClusteringEngine engine = createIncrementalClusteringEngine();
-
-        // Add spectra to the cluster engine.
-        clusterList.forEach(engine::addClusterIncremental);
-
-        // Return the results.
-        ret.add(new Tuple2<>(binMZKeyIterableTuple2._1(), engine.getClusters()));
-
-        return ret.iterator();
-    }
-
-    /**
-     * Return the PRIDE Cluster Incremental Engine that process all the ICluster List and return the final clusters.
+    /* Return the PRIDE Cluster Incremental Engine that process all the ICluster List and return the final clusters.
      * @return IIncrementalClusteringEngine cluster engine.
      */
-    private IIncrementalClusteringEngine createIncrementalClusteringEngine() {
+    public IIncrementalClusteringEngine createIncrementalClusteringEngine() {
         return new GreedyIncrementalClusteringEngine(
                 similarityChecker,
                 Defaults.getDefaultSpectrumComparator(),

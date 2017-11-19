@@ -1,4 +1,4 @@
-package org.big.bio.transformers;
+package org.big.bio.transformers.mappers;
 
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
@@ -27,11 +27,11 @@ import java.util.List;
  * <p>
  * Created by ypriverol (ypriverol@gmail.com) on 13/11/2017.
  */
-public class IterableClustersToBinner implements PairFlatMapFunction<Tuple2<BinMZKey, Iterable<ICluster>>, BinMZKey, ICluster> {
+public class IterableClustersToBinnerFlatMapTransformer implements PairFlatMapFunction<Tuple2<BinMZKey, Iterable<ICluster>>, BinMZKey, ICluster> {
 
     private IWideBinner binner;
 
-    public IterableClustersToBinner(JavaSparkContext context, String binWidthName) {
+    public IterableClustersToBinnerFlatMapTransformer(JavaSparkContext context, String binWidthName) {
 
         float binWidth = context.hadoopConfiguration().getFloat(binWidthName, PRIDEClusterDefaultParameters.DEFAULT_BINNER_WIDTH);
 
