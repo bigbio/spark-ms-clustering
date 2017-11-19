@@ -1,7 +1,8 @@
-package org.big.bio.transformers;
+package org.big.bio.transformers.mappers;
 
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
+import org.apache.spark.api.java.function.PairFunction;
 import org.big.bio.clustering.pride.PRIDEClusterDefaultParameters;
 import org.big.bio.keys.MZKey;
 import scala.Tuple2;
@@ -35,7 +36,7 @@ import java.util.UUID;
  * <p>
  * Created by Yasset Perez-Riverol  (ypriverol@gmail.com) on 01/11/2017.
  */
-public class SpectrumToInitialClusterTransformer implements PairFlatMapFunction<Tuple2<String, ISpectrum>, MZKey, ICluster> {
+public class SpectrumToInitialClusterMapTransformer implements PairFunction<Tuple2<String, ISpectrum>, MZKey, ICluster> {
 
     private static final double BIN_OVERLAP = 0;
 
@@ -57,7 +58,7 @@ public class SpectrumToInitialClusterTransformer implements PairFlatMapFunction<
      *
      * @param context Java Spark Context
      */
-    public SpectrumToInitialClusterTransformer(JavaSparkContext context){
+    public SpectrumToInitialClusterMapTransformer(JavaSparkContext context){
 
         // Read the Bin from the configuration file.
         double binWidth = context.hadoopConfiguration().getFloat(WINDOW_SIZE_PROPERTY, DEFAULT_BIN_WIDTH);
@@ -81,13 +82,10 @@ public class SpectrumToInitialClusterTransformer implements PairFlatMapFunction<
      * @throws Exception IO Error iterating the Spectrum file.
      */
     @Override
-    public Iterator<Tuple2<MZKey, ICluster>> call(Tuple2<String, ISpectrum> spectrumTuple) throws Exception {
+    public Tuple2<MZKey, ICluster> call(Tuple2<String, ISpectrum> spectrumTuple) throws Exception {
 
         ISpectrum spectrum = spectrumTuple._2();
-
         float precursorMz = spectrum.getPrecursorMz();
-
-        List<Tuple2<MZKey, ICluster>> ret = new ArrayList<>();
 
         if (precursorMz < MZIntensityUtilities.HIGHEST_USABLE_MZ) {
 
@@ -118,10 +116,9 @@ public class SpectrumToInitialClusterTransformer implements PairFlatMapFunction<
             // output cluster
             MZKey mzKey = new MZKey(precursorMz);
 
-            ret.add(new Tuple2<>(mzKey, cluster));
+            return new Tuple2<>(mzKey, cluster);
         }
-        return ret.iterator();
-
+        return null;
     }
 
     /**

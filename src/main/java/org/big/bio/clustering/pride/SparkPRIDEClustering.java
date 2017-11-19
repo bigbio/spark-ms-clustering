@@ -2,7 +2,6 @@ package org.big.bio.clustering.pride;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
-import org.apache.hadoop.io.Text;
 import org.apache.log4j.Logger;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -13,6 +12,10 @@ import org.big.bio.hadoop.MGFInputFormat;
 import org.big.bio.keys.BinMZKey;
 import org.big.bio.qcontrol.QualityControlUtilities;
 import org.big.bio.transformers.*;
+import org.big.bio.transformers.mappers.MGFStringToBinnedClusterMapTransformer;
+import org.big.bio.transformers.mappers.MGFStringToSpectrumMapTransformer;
+import org.big.bio.transformers.mappers.PrecursorBinnerMapTransformer;
+import org.big.bio.transformers.mappers.SpectrumToInitialClusterMapTransformer;
 import org.big.bio.utils.SparkUtil;
 import scala.Tuple2;
 import uk.ac.ebi.pride.spectracluster.cluster.ICluster;
@@ -105,9 +108,7 @@ public class SparkPRIDEClustering extends MSClustering {
 
             // Process the Spectra Files and convert them into BinMZKey Hash map. Each entry correspond to a "unique" precursor mass.
             JavaPairRDD<BinMZKey, ICluster> spectra = spectraAsStrings
-                    .flatMapToPair(new MGFStringToSpectrumTransformer())
-                    .flatMapToPair(new SpectrumToInitialClusterTransformer(clusteringMethod.context()))
-                    .flatMapToPair(new PrecursorBinnerTransformer(clusteringMethod.context(), PRIDEClusterDefaultParameters.INIT_CURRENT_BINNER_WINDOW_PROPERTY));
+                    .mapToPair(new MGFStringToBinnedClusterMapTransformer(clusteringMethod.context(), PRIDEClusterDefaultParameters.INIT_CURRENT_BINNER_WINDOW_PROPERTY));
             SparkUtil.collectLogCount("Number of Binned Precursors = " , spectra);
 
             // Group the ICluster by BinMzKey.

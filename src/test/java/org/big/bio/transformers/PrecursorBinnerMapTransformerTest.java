@@ -1,7 +1,6 @@
 package org.big.bio.transformers;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.io.Text;
 import org.apache.log4j.Logger;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -9,6 +8,9 @@ import org.big.bio.clustering.pride.PRIDEClusterDefaultParameters;
 import org.big.bio.hadoop.MGFInputFormat;
 import org.big.bio.keys.BinMZKey;
 import org.big.bio.keys.MZKey;
+import org.big.bio.transformers.mappers.MGFStringToSpectrumMapTransformer;
+import org.big.bio.transformers.mappers.PrecursorBinnerMapTransformer;
+import org.big.bio.transformers.mappers.SpectrumToInitialClusterMapTransformer;
 import org.big.bio.utils.SparkUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +32,7 @@ import java.io.IOException;
  * <p>
  * Created by ypriverol (ypriverol@gmail.com) on 01/11/2017.
  */
-public class PrecursorBinnerTransformerTest {
+public class PrecursorBinnerMapTransformerTest {
 
     private static final Logger LOGGER = Logger.getLogger(SpectrumToInitialClusterTest.class);
     private JavaSparkContext sparkConf;
@@ -55,12 +57,12 @@ public class PrecursorBinnerTransformerTest {
 
         JavaPairRDD<String, String> spectraAsStrings = sparkConf.newAPIHadoopFile(hdfsFileName, inputFormatClass, keyClass, valueClass, hadoopConf);
 
-        JavaPairRDD<String, ISpectrum> spectra = spectraAsStrings.flatMapToPair(new MGFStringToSpectrumTransformer());
+        JavaPairRDD<String, ISpectrum> spectra = spectraAsStrings.mapToPair(new MGFStringToSpectrumMapTransformer());
         LOGGER.info("Number of Spectra = " + spectra.count());
 
-        JavaPairRDD<MZKey, ICluster> initialClusters =  spectra.flatMapToPair(new SpectrumToInitialClusterTransformer(sparkConf));
+        JavaPairRDD<MZKey, ICluster> initialClusters =  spectra.mapToPair(new SpectrumToInitialClusterMapTransformer(sparkConf));
 
-        JavaPairRDD<BinMZKey, ICluster> precursorClusters =  initialClusters.flatMapToPair(new PrecursorBinnerTransformer(sparkConf, PRIDEClusterDefaultParameters.INIT_CURRENT_BINNER_WINDOW_PROPERTY));
+        JavaPairRDD<BinMZKey, ICluster> precursorClusters =  initialClusters.mapToPair(new PrecursorBinnerMapTransformer(sparkConf, PRIDEClusterDefaultParameters.INIT_CURRENT_BINNER_WINDOW_PROPERTY));
 
         LOGGER.info("Number of Binned Clusters = " + precursorClusters.count());
 

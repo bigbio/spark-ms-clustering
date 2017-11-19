@@ -1,13 +1,15 @@
 package org.big.bio.hadoop;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.io.Text;
 import org.apache.log4j.Logger;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.storage.StorageLevel;
-import org.big.bio.transformers.MGFStringToClusterTransformer;
+import org.big.bio.clustering.pride.PRIDEClusterDefaultParameters;
+import org.big.bio.keys.BinMZKey;
+import org.big.bio.transformers.mappers.MGFStringToBinnedClusterMapTransformer;
+import org.big.bio.transformers.mappers.MGFStringToSpectrumMapTransformer;
 import org.big.bio.utils.SparkUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,10 +53,8 @@ public class MGFInputToClusterRunner {
 
         Configuration hadoopConf = sparkConf.hadoopConfiguration();
 
-
         JavaPairRDD<String, String> spectraAsStrings = sparkConf.newAPIHadoopFile(hdfsFileName, inputFormatClass, keyClass, valueClass, hadoopConf);
-
-        JavaPairRDD<String, ICluster> spectra = spectraAsStrings.flatMapToPair(new MGFStringToClusterTransformer());
+        JavaPairRDD<BinMZKey, ICluster> spectra = spectraAsStrings.mapToPair(new MGFStringToBinnedClusterMapTransformer(sparkConf, PRIDEClusterDefaultParameters.INIT_CURRENT_BINNER_WINDOW_PROPERTY));
 
         boolean forceShuffle = true;
         JavaRDD<ICluster> spectraToScore = spectra.values();

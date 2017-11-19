@@ -1,21 +1,21 @@
-package org.big.bio.transformers;
+package org.big.bio.transformers.mappers;
 
 import org.apache.log4j.Logger;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.PairFlatMapFunction;
+import org.apache.spark.api.java.function.PairFunction;
 import org.big.bio.clustering.pride.PRIDEClusterDefaultParameters;
 import org.big.bio.keys.BinMZKey;
-import org.big.bio.keys.MZKey;
-import org.big.bio.utils.SparkUtil;
 import scala.Tuple2;
 import uk.ac.ebi.pride.spectracluster.cluster.ICluster;
+import uk.ac.ebi.pride.spectracluster.io.ParserUtilities;
+import uk.ac.ebi.pride.spectracluster.spectrum.ISpectrum;
+import uk.ac.ebi.pride.spectracluster.util.ClusterUtilities;
 import uk.ac.ebi.pride.spectracluster.util.MZIntensityUtilities;
 import uk.ac.ebi.pride.spectracluster.util.binner.IWideBinner;
 import uk.ac.ebi.pride.spectracluster.util.binner.SizedWideBinner;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.io.LineNumberReader;
+import java.io.StringReader;
 
 /**
  * This code is licensed under the Apache License, Version 2.0 (the
@@ -26,16 +26,19 @@ import java.util.List;
  * <p>
  * ==Overview==
  * <p>
- * This class performed Binner in the Precursor Mass.
+ * This class converts every Spectrum into a single spectrum clusters. This is used in the previous
+ * Cluster Algorithm as starting point for clustering.
+ *
+ * Read Paper here <a href="http://www.nature.com/nmeth/journal/v13/n8/full/nmeth.3902.html">Griss J. and Perez-Riverol Y. </a>
+ *
  * <p>
- * @author Yasset Perez-Riverol (ypriverol@gmail.com) on 01/11/2017.
+ * Created by Yasset Perez-Riverol (ypriverol@gmail.com) on 31/10/2017.
  */
-
-public class PrecursorBinnerTransformer implements PairFlatMapFunction<Tuple2<MZKey, ICluster>, BinMZKey, ICluster> {
+public class MGFStringToBinnedClusterMapTransformer implements PairFunction<Tuple2<String, String>, BinMZKey, ICluster> {
 
     private IWideBinner binner;
 
-    private static final Logger LOGGER = Logger.getLogger(PrecursorBinnerTransformer.class);
+    private static final Logger LOGGER = Logger.getLogger(PrecursorBinnerMapTransformer.class);
 
 
     /**
@@ -43,7 +46,7 @@ public class PrecursorBinnerTransformer implements PairFlatMapFunction<Tuple2<MZ
      *
      * @param context JavaSparkContext.
      */
-    public PrecursorBinnerTransformer(JavaSparkContext context, String binWidthName) {
+    public MGFStringToBinnedClusterMapTransformer(JavaSparkContext context, String binWidthName) {
 
         float binWidth = context.hadoopConfiguration().getFloat(binWidthName, PRIDEClusterDefaultParameters.DEFAULT_BINNER_WIDTH);
 
@@ -56,23 +59,24 @@ public class PrecursorBinnerTransformer implements PairFlatMapFunction<Tuple2<MZ
     }
 
     @Override
-    public Iterator<Tuple2<BinMZKey, ICluster>> call(Tuple2<MZKey, ICluster> tupleCluster) throws Exception {
+    public Tuple2<BinMZKey, ICluster> call(final Tuple2<String, String> kv) throws Exception {
+        LineNumberReader inp = new LineNumberReader(new StringReader(kv._2));
+        ISpectrum spectrum = ParserUtilities.readMGFScan(inp);
+        ICluster cluster = ClusterUtilities.asCluster(spectrum);
 
-        List<Tuple2<BinMZKey, ICluster>> ret = new ArrayList<>();
         IWideBinner binner = getBinner();
-        ICluster cluster = tupleCluster._2();
         float precursorMz = cluster.getPrecursorMz();
         int[] bins = binner.asBins(precursorMz);
 
 
         // must only be in one bin
         if (bins.length > 1) {
-                throw new InterruptedException("Multiple bins found for " + String.valueOf(precursorMz));
+            throw new InterruptedException("Multiple bins found for " + String.valueOf(precursorMz));
         } else if (bins.length != 0) {
             BinMZKey binMZKey = new BinMZKey(bins[0], precursorMz);
-            ret.add(new Tuple2<>(binMZKey, cluster));
+            return new Tuple2<>(binMZKey, cluster);
         }
-        return ret.iterator();
+        return null;
     }
 
     /**
