@@ -8,7 +8,7 @@ import org.big.bio.hadoop.MGFInputFormat;
 import org.big.bio.keys.BinMZKey;
 import org.big.bio.qcontrol.QualityControlUtilities;
 import org.big.bio.transformers.*;
-import org.big.bio.transformers.mappers.MGFStringToBinnedClusterFlatMapTransformer;
+import org.big.bio.transformers.mappers.MGFStringToBinnedClusterMapTransformer;
 import org.big.bio.utils.SparkUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,7 +71,7 @@ public class SparkPRIDEClusteringTest {
 
         // Process the Spectra Files and convert them into BinMZKey Hash map. Each entry correspond to a "unique" precursor mass.
         JavaPairRDD<BinMZKey, ICluster> spectra = spectraAsStrings
-                .mapToPair(new MGFStringToBinnedClusterFlatMapTransformer(clusteringMethod.context(), PRIDEClusterDefaultParameters.INIT_CURRENT_BINNER_WINDOW_PROPERTY));
+                .mapToPair(new MGFStringToBinnedClusterMapTransformer(clusteringMethod.context(), PRIDEClusterDefaultParameters.INIT_CURRENT_BINNER_WINDOW_PROPERTY));
         SparkUtil.collectLogCount("Number of Binned Precursors = " , spectra);
 
         // Group the ICluster by BinMzKey.

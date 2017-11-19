@@ -34,10 +34,10 @@ import java.io.StringReader;
  * <p>
  * Created by Yasset Perez-Riverol (ypriverol@gmail.com) on 31/10/2017.
  */
-public class MGFStringToBinnedClusterFlatMapTransformer implements PairFunction<Tuple2<String, String>, BinMZKey, ICluster> {
+public class MGFStringToBinnedClusterMapTransformer implements PairFunction<Tuple2<String, String>, BinMZKey, ICluster> {
 
     private IWideBinner binner;
-    private static final Logger LOGGER = Logger.getLogger(MGFStringToBinnedClusterFlatMapTransformer.class);
+    private static final Logger LOGGER = Logger.getLogger(MGFStringToBinnedClusterMapTransformer.class);
 
 
     /**
@@ -45,7 +45,7 @@ public class MGFStringToBinnedClusterFlatMapTransformer implements PairFunction<
      *
      * @param context JavaSparkContext.
      */
-    public MGFStringToBinnedClusterFlatMapTransformer(JavaSparkContext context, String binWidthName) {
+    public MGFStringToBinnedClusterMapTransformer(JavaSparkContext context, String binWidthName) {
 
         float binWidth = context.hadoopConfiguration().getFloat(binWidthName, PRIDEClusterDefaultParameters.DEFAULT_BINNER_WIDTH);
 
