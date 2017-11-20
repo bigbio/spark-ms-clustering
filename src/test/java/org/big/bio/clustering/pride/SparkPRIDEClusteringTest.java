@@ -78,6 +78,13 @@ public class SparkPRIDEClusteringTest {
                 .mapToPair(new MGFStringToBinnedClusterMapTransformer(clusteringMethod.context(), PRIDEClusterDefaultParameters.INIT_CURRENT_BINNER_WINDOW_PROPERTY));
         SparkUtil.collectLogCount("Number of Binned Precursors = " , spectra);
 
+        SparkUtil.logNumber("Number of Partitions = ", spectra.partitions().size());
+
+        //Thresholds for the refinements of the results
+        List<Float> thresholds = PRIDEClusterUtils
+                .generateClusteringThresholds(Float.parseFloat(clusteringMethod.getProperty(PRIDEClusterDefaultParameters.CLUSTER_START_THRESHOLD_PROPERTY)),
+                        Float.parseFloat(clusteringMethod.getProperty(PRIDEClusterDefaultParameters.CLUSTER_END_THRESHOLD_PROPERTY)), Integer.parseInt(clusteringMethod.getProperty(PRIDEClusterDefaultParameters.CLUSTERING_ROUNDS_PROPERTY)));
+
 
         // The first step is to create the Major comparison predicate.
         IComparisonPredicate<ICluster> comparisonPredicate = new ClusterShareMajorPeakPredicate(Integer.parseInt(clusteringMethod.getProperty(PRIDEClusterDefaultParameters.MAJOR_PEAK_COUNT_PROPERTY)));
@@ -100,11 +107,7 @@ public class SparkPRIDEClusteringTest {
 
         //Number of Clusters after the first iteration
         PRIDEClusterUtils.reportNumberOfClusters("Number of Clusters after ClusterShareMajorPeakPredicate = ", binnedPrecursors);
-
-        //Thresholds for the refinements of the results
-        List<Float> thresholds = PRIDEClusterUtils
-                .generateClusteringThresholds(Float.parseFloat(clusteringMethod.getProperty(PRIDEClusterDefaultParameters.CLUSTER_START_THRESHOLD_PROPERTY)),
-                        Float.parseFloat(clusteringMethod.getProperty(PRIDEClusterDefaultParameters.CLUSTER_END_THRESHOLD_PROPERTY)), Integer.parseInt(clusteringMethod.getProperty(PRIDEClusterDefaultParameters.CLUSTERING_ROUNDS_PROPERTY)));
+        SparkUtil.logNumber("Number of Partitions = ", binnedPrecursors.partitions().size());
 
         // The first step is to create the Major comparison predicate.
         for(Float threshold: thresholds){
@@ -120,18 +123,18 @@ public class SparkPRIDEClusteringTest {
                                 List<ICluster> clusters = new ArrayList<>();
                                 clusters.add(cluster);
                                 return clusters;
-                            }, new IncrementalClusteringReducerCombiner(similarityChecker, originalPrecision, null, comparisonPredicate)
-                            , new IncrementalClusteringReducerMerger(similarityChecker, originalPrecision, null, comparisonPredicate));
+                            }, new IncrementalClusteringReducerCombiner(similarityChecker, threshold, null, comparisonPredicate)
+                            , new IncrementalClusteringReducerMerger(similarityChecker, threshold, null, comparisonPredicate));
 
             // Cluster report for iteration
             PRIDEClusterUtils.reportNumberOfClusters("Number of Clusters after IncrementalClusteringReducer , Thershold " + threshold + " = ", binnedPrecursors);
         }
 
         // Final Number of Clusters
-        JavaRDD<ICluster> finalClusters = binnedPrecursors
-                .flatMapValues(cluster -> cluster)
-                .map(Tuple2::_2);
+        JavaRDD<ICluster> finalClusters = binnedPrecursors.flatMapValues(cluster -> cluster).map(Tuple2::_2);
+
         PRIDEClusterUtils.reportNumberOfClusters("Final Number of Clusters  = ", finalClusters);
+        PRIDEClusterUtils.reportNumberOfClusters("Final Number of Clusters with >= 3 peptides = ", finalClusters.filter(iCluster -> QualityControlUtilities.numberOfIdentifiedSpectra(iCluster) >=3));
 
         // Print the global Quality
         PRIDEClusterUtils.reportNumber("Global cluster quality = ", QualityControlUtilities.clusteringGlobalQuality(finalClusters, 3));

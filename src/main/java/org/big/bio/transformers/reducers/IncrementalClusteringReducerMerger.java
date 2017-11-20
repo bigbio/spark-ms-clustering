@@ -68,13 +68,14 @@ public class IncrementalClusteringReducerMerger extends IncrementalClusteringRed
         clusterList.forEach(cluster -> {
             engine.addClusterIncremental(cluster);
             Collection<ICluster> clusters = engine.getClusters();
-            LOGGER.info(" Merger Job -- Intermediate Number of clusters -- " + clusters.size());
+            LOGGER.info("Merger Job -- Total Spectra -- " + clusterList.size() + " -- Cluster Precursor MZ -- " + cluster.getPrecursorMz() + " -- Intermediate Number of clusters -- " + clusters.size());
         });
 
-        Collection<ICluster> results = engine.getClusters();
+        Collection<ICluster> clusters = engine.getClusters();
+        LOGGER.info("Merger Job -- Total Spectra -- " + clusterList.size() + " -- Final Number of clusters -- " + clusters.size());
 
         // Return the results.
-        return results;
+        return clusters;
     }
 }
 

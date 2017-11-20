@@ -67,10 +67,13 @@ public class IncrementalClusteringReducerCombiner extends IncrementalClusteringR
         clusterList.forEach( cluster -> {
             engine.addClusterIncremental(cluster);
             Collection<ICluster> clusters = engine.getClusters();
-            LOGGER.info("Combiner Job -- Intermediate Number of clusters -- " + clusters.size());
+    //        LOGGER.info("Combiner Job -- Total Spectra -- " + clusterList.size() + " -- Cluster Precursor MZ -- " + cluster.getPrecursorMz() + " -- Intermediate Number of clusters -- " + clusters.size());
         });
 
+        Collection<ICluster> clusters = engine.getClusters();
+   //     LOGGER.info("Combiner Job -- Total Spectra -- " + clusterList.size() + " -- Final Number of clusters -- " + clusters.size());
+
         // Return the results.
-        return engine.getClusters();
+        return clusters;
     }
 }

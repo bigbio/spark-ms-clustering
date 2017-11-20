@@ -170,4 +170,12 @@ public class SparkUtil {
         LOGGER.info(message + rdd.count());
     }
 
+    /**
+     * Log a Number and message in the system.
+     * @param message message to Log
+     * @param number Number to Log
+     */
+    public static void logNumber(String message, int number) {
+        LOGGER.info(message + number);
+    }
 }
