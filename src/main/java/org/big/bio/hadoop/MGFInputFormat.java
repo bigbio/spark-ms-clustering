@@ -116,7 +116,7 @@ public class MGFInputFormat extends FileInputFormat<String, String> implements S
             m_RealFile = fs.open(split.getPath());
             if (codec != null) {
                 if (true)
-                    throw new UnsupportedOperationException("We cannot handle compressed streams " + codec.getClass());
+                throw new UnsupportedOperationException("We cannot handle compressed streams " + codec.getClass());
                 CompressionInputStream inputStream = codec.createInputStream(m_RealFile);
                 m_Input = new LineReader(inputStream);
                 m_End = Long.MAX_VALUE;

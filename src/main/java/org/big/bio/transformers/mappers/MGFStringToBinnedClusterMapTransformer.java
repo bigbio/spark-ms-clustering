@@ -1,11 +1,9 @@
 package org.big.bio.transformers.mappers;
 
-import org.apache.log4j.Logger;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
 import org.big.bio.clustering.pride.PRIDEClusterDefaultParameters;
 import org.big.bio.keys.BinMZKey;
-import org.big.bio.keys.MZKey;
 import scala.Tuple2;
 import uk.ac.ebi.pride.spectracluster.cluster.ICluster;
 import uk.ac.ebi.pride.spectracluster.io.ParserUtilities;

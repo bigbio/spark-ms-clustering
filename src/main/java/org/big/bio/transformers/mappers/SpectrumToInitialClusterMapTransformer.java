@@ -1,7 +1,6 @@
 package org.big.bio.transformers.mappers;
 
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.api.java.function.PairFunction;
 import org.big.bio.clustering.pride.PRIDEClusterDefaultParameters;
 import org.big.bio.keys.MZKey;
@@ -17,8 +16,6 @@ import uk.ac.ebi.pride.spectracluster.util.binner.SizedWideBinner;
 import uk.ac.ebi.pride.spectracluster.util.function.Functions;
 import uk.ac.ebi.pride.spectracluster.util.function.IFunction;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 

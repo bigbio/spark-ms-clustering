@@ -1,18 +1,9 @@
 package org.big.bio.transformers.mappers;
 
-import org.apache.log4j.Logger;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
-import org.big.bio.clustering.pride.PRIDEClusterDefaultParameters;
-import org.big.bio.keys.BinMZKey;
 import scala.Tuple2;
-import uk.ac.ebi.pride.spectracluster.cluster.ICluster;
 import uk.ac.ebi.pride.spectracluster.io.ParserUtilities;
 import uk.ac.ebi.pride.spectracluster.spectrum.ISpectrum;
-import uk.ac.ebi.pride.spectracluster.util.ClusterUtilities;
-import uk.ac.ebi.pride.spectracluster.util.MZIntensityUtilities;
-import uk.ac.ebi.pride.spectracluster.util.binner.IWideBinner;
-import uk.ac.ebi.pride.spectracluster.util.binner.SizedWideBinner;
 
 import java.io.LineNumberReader;
 import java.io.StringReader;

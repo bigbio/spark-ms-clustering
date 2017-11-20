@@ -14,7 +14,6 @@ import org.big.bio.qcontrol.QualityControlUtilities;
 import org.big.bio.transformers.*;
 import org.big.bio.transformers.mappers.IterableClustersToBinnerFlatMapTransformer;
 import org.big.bio.transformers.mappers.MGFStringToBinnedClusterMapTransformer;
-import org.big.bio.transformers.reducers.IncrementalClusteringReducer;
 import org.big.bio.transformers.reducers.IncrementalClusteringReducerCombiner;
 import org.big.bio.transformers.reducers.IncrementalClusteringReducerMerger;
 import org.big.bio.utils.SparkUtil;

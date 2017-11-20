@@ -1,11 +1,7 @@
 package org.big.bio.transformers.reducers;
 
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 import org.apache.log4j.Logger;
 import org.apache.spark.api.java.function.Function2;
-import org.big.bio.transformers.mappers.MGFStringToBinnedClusterMapTransformer;
-import scala.tools.nsc.backend.opt.Inliners;
 import uk.ac.ebi.pride.spectracluster.cluster.ICluster;
 import uk.ac.ebi.pride.spectracluster.engine.IIncrementalClusteringEngine;
 import uk.ac.ebi.pride.spectracluster.similarity.ISimilarityChecker;
@@ -15,7 +11,6 @@ import uk.ac.ebi.pride.spectracluster.util.predicate.IComparisonPredicate;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -61,7 +56,7 @@ public class IncrementalClusteringReducerMerger extends IncrementalClusteringRed
         List<ICluster> clusterList = new ArrayList<>((Collection<? extends ICluster>)iClusters1);
         clusterList.addAll((Collection<? extends ICluster>) iClusters2);
 
-        Collections.sort(clusterList, (o1, o2) -> Float.compare(o1.getPrecursorMz(), o2.getPrecursorMz()));
+        clusterList.sort((o1, o2) -> Float.compare(o1.getPrecursorMz(), o2.getPrecursorMz()));
 
         // Add spectra to the cluster engine.
         IIncrementalClusteringEngine engine = createIncrementalClusteringEngine();

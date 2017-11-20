@@ -18,7 +18,6 @@ import java.io.IOException;
 /**
  * Output clusters into .clustering file format
  *
- * @author Rui Wang
  * @author Yasset Perez-Riverol
  */
 public class ClusteringFileOutputFormat extends TextOutputFormat<String, String> {
