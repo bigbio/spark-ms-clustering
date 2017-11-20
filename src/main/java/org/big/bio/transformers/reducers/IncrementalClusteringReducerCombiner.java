@@ -1,6 +1,7 @@
 package org.big.bio.transformers.reducers;
 
 import com.google.common.collect.Lists;
+import org.apache.log4j.Logger;
 import org.apache.spark.api.java.function.Function2;
 import scala.Tuple2;
 import uk.ac.ebi.pride.spectracluster.cluster.ICluster;
@@ -30,6 +31,8 @@ import java.util.List;
  */
 public class IncrementalClusteringReducerCombiner extends IncrementalClusteringReducer
         implements Function2<Iterable<ICluster>, ICluster, Iterable<ICluster>> {
+
+    private static final Logger LOGGER = Logger.getLogger(IncrementalClusteringReducerCombiner.class);
 
     /**
      * Incremental Clustering that merge an ICluster with a list of cluster.
@@ -61,7 +64,11 @@ public class IncrementalClusteringReducerCombiner extends IncrementalClusteringR
 
         // Add spectra to the cluster engine.
         IIncrementalClusteringEngine engine = createIncrementalClusteringEngine();
-        clusterList.forEach(engine::addClusterIncremental);
+        clusterList.forEach( cluster -> {
+            engine.addClusterIncremental(cluster);
+            Collection<ICluster> clusters = engine.getClusters();
+            LOGGER.info("Combiner Job -- Intermediate Number of clusters -- " + clusters.size());
+        });
 
         // Return the results.
         return engine.getClusters();

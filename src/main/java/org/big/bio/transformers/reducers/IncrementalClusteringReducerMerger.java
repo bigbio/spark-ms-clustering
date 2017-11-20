@@ -65,10 +65,13 @@ public class IncrementalClusteringReducerMerger extends IncrementalClusteringRed
 
         // Add spectra to the cluster engine.
         IIncrementalClusteringEngine engine = createIncrementalClusteringEngine();
-        clusterList.forEach(engine::addClusterIncremental);
+        clusterList.forEach(cluster -> {
+            engine.addClusterIncremental(cluster);
+            Collection<ICluster> clusters = engine.getClusters();
+            LOGGER.info(" Merger Job -- Intermediate Number of clusters -- " + clusters.size());
+        });
 
         Collection<ICluster> results = engine.getClusters();
-        LOGGER.info("Original Clusters -- " + clusterList.size() + "Final Clusters -- " + results.size());
 
         // Return the results.
         return results;
